@@ -23,7 +23,7 @@ router.get("/", (req, res) => {
     });
 });
 
-//add departments
+//add departments with fields
 router.post('/', async (req, res)=>
 {
     db = req.db

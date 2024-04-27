@@ -13,7 +13,11 @@ router.get('/', async (req, res)=>
               as: 'deptId',
               in: { $toObjectId: '$$deptId' }
             }
-          }
+          },
+          convertedCourseCategory: 
+          {
+            $toObjectId: '$CourseCategory'
+          },
         }
       },
       {
@@ -22,6 +26,12 @@ router.get('/', async (req, res)=>
           localField: 'convertedEligibleDepartments',
           foreignField: '_id',
           as: 'eligibleDepartments'
+        },
+        $lookup: {
+          from: 'CourseCategory',
+          localField: 'convertedCourseCategory',
+          foreignField: 'name',
+          as: 'CourseType'
         }
       },
       {
