@@ -5,5 +5,5 @@ const Collections = {
     'courses': 'Courses',
     'faculties': 'Faculties',
     'student': 'Student',
-    'coursecategory': ;
+    'coursecategory': 'CourseCategory'
 }
