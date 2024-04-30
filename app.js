@@ -7,7 +7,8 @@ const designationRoute = require('./routes/designationRoute')
 const facultyRoute = require('./routes/facultyRoute')
 const studentRoute = require('./routes/studentRoute')
 const departmentRoute = require('./routes/departmentRoute')
-const CourseRoute = require('./routes/courseRoute')
+const courseRoute = require('./routes/courseRoute')
+const courseCategoryRoute = require('./routes/courseCategoryRoute')
 
 app.use(express.json())
 let db
@@ -34,6 +35,7 @@ connectToDB((err)=>
 
 app.use('/designation', designationRoute)
 app.use('/student', studentRoute)
-app.use('/course', CourseRoute)
+app.use('/course', courseRoute)
 app.use('/faculty', facultyRoute)
 app.use('/department', departmentRoute)
+app.use('/courseCategory', courseCategoryRoute)

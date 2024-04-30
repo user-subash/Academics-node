@@ -1,11 +1,12 @@
 const router = require('express').Router()
+const {Collections} = require('../constants')
 
 //get all designations
 router.get('/', async (req, res)=>
 {
     db = req.db
     let designations = []
-    db.collection('designations')
+    db.collection(Collections.designations)
     .find()
     .forEach((designation)=>{
       designation._id = designation._id.toString()
@@ -40,7 +41,7 @@ router.post("/", async (req, res)=>
     }
 
     //check for existance of designations
-    const DesignationExists = await db.collection('designations').find({Designation: req.body.Designation})
+    const DesignationExists = await db.collection(Collections.designations).find({Designation: req.body.Designation})
                                                                  .toArray();
     if(DesignationExists.length != 0)
     {
@@ -48,7 +49,7 @@ router.post("/", async (req, res)=>
     }
 
     //if designation doesn't exists then proceed for new  designation creation
-    await db.collection('designations').insertOne(designationDetails)
+    await db.collection(Collections.designations).insertOne(designationDetails)
     .then((data)=>{
       return res.status(200).json({Message: `${req.body.Designation} added successfully`})
     })

@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const {Collections} = require('../constants')
 
 //get all courses
 router.get('/', async (req, res)=>
@@ -26,23 +27,41 @@ router.get('/', async (req, res)=>
           localField: 'convertedEligibleDepartments',
           foreignField: '_id',
           as: 'eligibleDepartments'
-        },
+        }
+      },
+      {
         $lookup: {
           from: 'CourseCategory',
           localField: 'convertedCourseCategory',
-          foreignField: 'name',
-          as: 'CourseType'
+          foreignField: '_id',
+          as: 'CourseTypeArray'
+        }
+      },
+      {
+        $addFields: {
+          CourseTypeObj: { $arrayElemAt: ["$CourseTypeArray", 0] }
+        }
+      },
+      {
+        $addFields: {
+          CourseType: "$CourseTypeObj.name"
         }
       },
       {
         $project: {
           EligibleDepartments: 0,
-          convertedEligibleDepartments: 0
+          convertedEligibleDepartments: 0,
+          convertedCourseCategory: 0,
+          CourseCategory: 0,
+          CourseTypeArray: 0,
+          CourseTypeObj: 0 
         }
       }
     ]
     
-    courses = await db.collection('Courses')
+    
+    
+    courses = await db.collection(Collections.courses)
     .aggregate(pipeline)
     .toArray()
     .catch((err)=>
@@ -56,7 +75,7 @@ router.get('/', async (req, res)=>
     {
         return res.status(404).json({Message: 'No Courses were added'})
     }
-    
+    console.log(courses)
     //convert department object id to string
     courses = courses.map((course)=>{
       course.eligibleDepartments.map((department)=>
@@ -75,7 +94,7 @@ router.post('/', async (req, res)=>
 {
     db = req.db
     //check if all required fields exists
-    courseDetials = {
+    courseDetails = {
       CourseCode: req.body.CourseCode,
       CourseName: req.body.CourseName,
       Regulation: req.body.Regulation,
@@ -85,14 +104,14 @@ router.post('/', async (req, res)=>
       EligibleDepartments: req.body.EligibleDepartments
     }
 
-    for(key in courseDetials)
+    for(key in courseDetails)
     {
-        if(courseDetials[key] == undefined || courseDetials.EligibleDepartments.length == 0)
+        if(courseDetails[key] == undefined || courseDetails.EligibleDepartments.length == 0)
           return res.status(400).json({Message: "Some fields are missing"});
     }
 
     //check if course already exists
-    let courses = await db.collection('Courses').find({CourseCode: req.body.CourseCode})
+    let courses = await db.collection(Collections.courses).find({CourseCode: req.body.CourseCode})
     .toArray()
     if(courses.length != 0)
     {
@@ -100,7 +119,7 @@ router.post('/', async (req, res)=>
     }
 
     //If everything is ok then proceed for database conneciton
-    db.collection("Courses").insertOne(courseDetials)
+    db.collection("Courses").insertOne(courseDetails)
     .then((result) =>
     {
         res.status(200).json({Message:"Successfully added the new course!"});

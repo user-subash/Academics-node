@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const {Collections} = require('../constants')
 
 
 //get students
@@ -36,7 +37,7 @@ router.get('/', async (req, res)=>
       }
     ]
 
-    let students = await db.collection('Students')
+    let students = await db.collection(Collections.students)
     .aggregate(pipeline)
     .toArray()
     .catch((err)=>
@@ -82,7 +83,7 @@ router.post('/', async(req, res)=>
     }
 
     //check for student exists
-    let student = await db.collection('Students').find({$or: [{RollNo: req.body.RollNo}, {StudentEmail: req.body.StudentEmail}]})
+    let student = await db.collection(Collections.students).find({$or: [{RollNo: req.body.RollNo}, {StudentEmail: req.body.StudentEmail}]})
     .toArray()
     if(student.length !=0 )
     {

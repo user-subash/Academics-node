@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const {ObjectId} = require('mongodb')
+const {Collections} = require('../constants')
 
 //get all the faculties
 router.get("/", async (req, res)=>
@@ -58,7 +59,7 @@ router.get("/", async (req, res)=>
         }
       }  
   ]
-    result = await db.collection('Faculties')
+    result = await db.collection(Collections.faculties)
       .aggregate(pipelines)
       .toArray();
 
@@ -140,7 +141,7 @@ router.get("/mail/:mail", async (req, res)=>
     ]
 
     //get results from database
-    const result = await db.collection('Faculties')
+    const result = await db.collection(Collections.faculties)
     .aggregate(pipelines)
     .toArray();
 
@@ -164,7 +165,7 @@ router.get(('/departments/:department'), async (req, res)=>
 {
   db = req.db
   let departments = []
-  await db.collection('Departments')
+  await db.collection(Collections.departments)
     .find({Name: req.params.department})
     .forEach(department=> departments.push(department))
   
@@ -175,7 +176,7 @@ router.get(('/departments/:department'), async (req, res)=>
   else
   {
     let faculties = []
-    await db.collection("Faculties")
+    await db.collection(Collections.faculties)
       .find({FacultyDepartment: departments[0]._id.toString()})
       .forEach((faculty) => {
         //convert faculty id from object to string
@@ -220,7 +221,7 @@ router.post('/', async (req, res)=>
     }
 
     //check if the faculty mail already exists
-    const FacultyExists = await db.collection('Faculties').find({FacultyMail: req.body.FacultyMail})
+    const FacultyExists = await db.collection(Collections.faculties).find({FacultyMail: req.body.FacultyMail})
                                                       .toArray()
     
 
@@ -230,7 +231,7 @@ router.post('/', async (req, res)=>
     }
 
     //add faculty to the db
-    await db.collection('Faculties').insertOne(facultyData)
+    await db.collection(Collections.faculties).insertOne(facultyData)
     .then(()=>
     {
         res.status(200).json({Message: "Faculty added successfully"});

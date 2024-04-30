@@ -1,10 +1,11 @@
 const router = require('express').Router()
+const {Collections} = require('../constants')
 
 //get all the departments
 router.get("/", (req, res) => {
     db = req.db
     let departments = [];
-    db.collection('Departments')
+    db.collection(Collections.departments)
     .find({}, {}) 
     .forEach((department) => 
     {
@@ -41,7 +42,7 @@ router.post('/', async (req, res)=>
     }
 
     //check for departement existence
-    const DepartmentExists = await db.collection('Departments').find({Name: DepartmentData.Name.toUpperCase()})
+    const DepartmentExists = await db.collection(Collections.departments).find({Name: DepartmentData.Name.toUpperCase()})
                                                  .toArray();
     if(DepartmentExists.length != 0)
     {
@@ -49,7 +50,7 @@ router.post('/', async (req, res)=>
     }
 
     //if departemnt doesn't exists then proceed for new department creation
-    db.collection('Departments').insertOne(DepartmentData)
+    db.collection(Collections.departments).insertOne(DepartmentData)
     .then((data) =>  
     {
        res.status(200).send(`${DepartmentData.Name} department added successfully`)

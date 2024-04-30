@@ -1,9 +1,13 @@
 
 // A constant object that stores the 
 const Collections = {
-    'department': 'Department',
+    'departments': 'Departments',
     'courses': 'Courses',
     'faculties': 'Faculties',
-    'student': 'Student',
-    'coursecategory': 'CourseCategory'
+    'students': 'Students',
+    'coursecategory': 'CourseCategory',
+    'designations': 'Designations',
+    'registeredcourses': 'RegisteredCourses'
 }
+
+module.exports = {Collections}
